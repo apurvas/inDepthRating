@@ -2,7 +2,12 @@ import math
 import tfidf
 import nltk
 from nltk.corpus import wordnet as wn
+from nltk.tokenize import sent_tokenize
 import time
+import re
+from alchemyapi import AlchemyAPI
+alchemyapi = AlchemyAPI()
+
 my_tfidf = tfidf.TfIdf()
 document1 = "cosmopolitan.txt" #insert new text document and put in file location.
 document2 = "nytimes.txt"
@@ -12,6 +17,32 @@ my_tfidf.add_input_document(document1)
 
 #tfidf implemented in tfidf.py
 start_time = time.time()
+##def imp_sent_splitter(desiredDoc):
+##    with open(desiredDoc) as t:
+##        data1 = t.read()
+##    a = data1.split("\n")
+##    sent_list = []
+##    top_sent_list = []
+##    conc_sent_list = []
+##    for i in a:
+##        if i != ['']:
+##            sent_tokenizer = sent_tokenize(i)
+##            sent_list.extend(sent_tokenizer)
+##            if sent_tokenizer != []:
+##                top_sent_list.append(sent_tokenizer[0])
+##                conc_sent_list.append(sent_tokenizer[len(sent_tokenizer)-1])
+##    print(len(top_sent_list))
+##    print(len(conc_sent_list))
+##    print (data1)
+##
+##    sum1 = 0
+##    print(len(sent_list))
+##    ##print(conc_sent_list)
+##        
+##    
+##    ##re.split('\s{4,}',text) --> Splitting with indents
+##    ##data1.split("\n\n") --> splitting with new lines.
+##imp_sent_splitter(document2)
 def in_depth_rating(document1, searchWord):
 ##  start_time = time.time()
     #document1 should be location of file.
@@ -30,8 +61,10 @@ def in_depth_rating(document1, searchWord):
             docSet.add(j)
 
 
-    def content_length(desiredDoc):
-        docLen = 0
+    def sent_score(desiredDoc):
+        myText = data
+        response = alchemyapi.sentiment("text", myText)
+        return response
 
     
 
@@ -72,6 +105,8 @@ def in_depth_rating(document1, searchWord):
     c2 = 3 #contentScore constant.
     relevancyScore = relevancy_score(desiredDoc)
     inDepthRating = c1*relevancyScore + c2*contentScore
+    response = sent_score(desiredDoc)
+    print ("Sentiment: ", response["docSentiment"]["type"])
     return (relevancyScore, contentScore, inDepthRating)
 
 ##print("--- %s seconds ---" % (time.time() - start_time))    
@@ -79,15 +114,12 @@ def in_depth_rating(document1, searchWord):
 
 ##print(in_depth_rating(document2,"transexual"))
 ##print ("___________________________________________________________")
-##print(in_depth_rating(document1,"transexual"))
+print(in_depth_rating(document1,"transexual"))
 ##print (wn.synsets("just"))
 ##print (wn.path_similarity(wn.synset('just.a.01'),wn.synset('merely.r.01')))
-print (in_depth_rating(document3, "gender"))
+
 ##print ("___________________________________________________________")
 
-                          
-
-print(in_depth_rating(document2,"transexual"))
 ##print("'" + 'kitchen' + ".n.01'")
 ##newWord = "kitchen"
 ##print (wn.synsets(newWord))
@@ -98,7 +130,7 @@ print(in_depth_rating(document2,"transexual"))
 ##a = newWord + """.n.01"""
 ##print (wn.synset(a))
 ##print ((wn.synsets("your")))
-print (in_depth_rating(document1, "kitchen"))
+##print (in_depth_rating(document1, "kitchen"))
 ##print (wn.path_similarity(wn.synsets("was", pos = wn.NOUN)[0],wn.synset("kitchen.n.01")))
 ##print (wn.synset("kitchen.n.01"))
 print("--- %s seconds ---" % (time.time() - start_time)) 
